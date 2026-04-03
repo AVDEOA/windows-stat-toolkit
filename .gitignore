@@ -1,0 +1,11 @@
+bin/
+obj/
+artifacts/
+app/src/log/
+app/src/state/
+app/tests/bin/
+app/tests/obj/
+app/tests/artifacts/
+versions/*/runtime/
+versions/*.zip
+versions/*/*.zip

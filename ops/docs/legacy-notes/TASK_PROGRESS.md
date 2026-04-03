@@ -1,0 +1,108 @@
+﻿# Ход выполнения
+
+## 2026-03-24
+- Инициализированы файлы памяти задачи для набора диагностических скриптов Windows.
+- Подтверждено, что текущая папка проекта: `/mnt/c/CodexTest`.
+- Подтверждено наличие `powershell.exe`, поэтому возможна проверка и запуск со стороны Windows.
+- Зафиксирован уже существующий файл: `test-windows-system.ps1` из предыдущей отдельной задачи.
+- Созданы файлы набора: общий модуль, семь диагностических блоков, мастер-скрипт и отдельный скрипт валидации.
+- По требованию пользователя валидация и запуск должны выполняться через Windows PowerShell из `C:\CodexTest` с сохранением отчётов в `C:\Stat`.
+- Выполнена первичная Windows-проверка синтаксиса и безопасности: ошибок синтаксиса не найдено, запрещённых команд не найдено.
+- Начат перевод всех человеко-читаемых текстов набора на русский язык: заголовков, секций, статусов, отчётных шапок и файлов памяти задачи.
+- После перевода обнаружена проблема совместимости с кодировкой: Windows PowerShell 5.1 некорректно разбирал русские строки в `.ps1` без BOM.
+- Все `.ps1` и `.md` файлы переведены в `UTF-8 with BOM`, после чего Windows-валидация снова прошла успешно.
+- Выполнен полный запуск `Run-All-Stat-Collection.ps1` через Windows PowerShell из `C:\CodexTest`.
+- В `C:\Stat` успешно созданы все 7 отчётов блоков и 1 сводный отчёт с общей временной меткой `2026-03-24_16-56-13`.
+- Сводный отчёт подтвердил успешное выполнение всех диагностических блоков без падения мастер-скрипта.
+- Добавлен новый скрипт `Analize.ps1` для машинно-ориентированного объединённого сбора данных по всем блокам с выбором периода через меню.
+- Выполнен отдельный неинтерактивный запуск `Analize.ps1 -PeriodChoice 2` через Windows PowerShell из `C:\CodexTest`.
+- Подтверждено создание файла `C:\Stat\Analize.txt` размером `24149` байт с отметкой времени `2026-03-24 17:21:51`.
+- Подтверждено, что `Analize.ps1` успешно собрал `43` объекта и сформировал JSON-массив без ошибки выполнения.
+- Добавлен отдельный журнал действий `SESSION_LOG.md`, чтобы после перезагрузки было видно последнюю точку остановки и ход текущей сессии.
+- Добавлена вторая версия анализатора `AnalizeV2.ps1` с отдельным выходным файлом `C:\Stat\AnalizeV2.txt`.
+- `AnalizeV2.ps1` включён в `Validate-Toolkit.ps1`, синтаксическая проверка прошла успешно.
+- Во время тестирования `AnalizeV2.ps1` устранены несколько проблем совместимости типов Windows PowerShell 5.1.
+- Итоговый запуск `AnalizeV2.ps1 -PeriodChoice 2` выполнен успешно.
+- Проверено сравнение `Analize.txt` и `AnalizeV2.txt`: V2 стал структурно удобнее для нейросети, но пока содержит на `5` уникальных событий меньше, чем V1.
+- Найдена и исправлена причина неполной выборки событий во V2: для критичных категорий добавлена точная выборка по `Id` без потери более ранних записей журнала.
+- Повторный запуск `AnalizeV2.ps1 -PeriodChoice 2` выполнен успешно, `C:\Stat\AnalizeV2.txt` обновлён.
+- Повторное сравнение подтвердило, что V2 теперь содержит все уникальные события из V1 и дополнительно ещё `14` уникальных событий.
+- На текущий момент `AnalizeV2.txt` лучше первой версии и по структуре для ИИ, и по полноте событий.
+- После сообщения пользователя об ошибке автономного запуска из `C:\Stat` `AnalizeV2.ps1` доработан до самодостаточного режима без обязательного соседнего `StatToolkit.Common.ps1`.
+- В `AnalizeV2.txt` добавлен новый краткий раздел `machine_overview` для лучшего сохранения контекста ПК нейросетью на основе данных блоков 1 и 2.
+- Обновлённая копия `C:\Stat\AnalizeV2.ps1` успешно протестирована прямым запуском из `C:\Stat`.
+- По новому ручному логу пользователя `AnalizeV2.ps1` существенно усилен: добавлены `System 1001`, `nvlddmkm 153`, `disk 7 bad block`, PnP display inventory, `nvidia-smi` inventory, `ai_summary` и отдельные аналитические секции по crash/bugcheck/GPU/storage/WHEA/PCI.
+- Нормализатор событий доработан так, чтобы использовать `Message`, `EventData` и `Properties`, не терять события с пустым сообщением и не падать на нестандартных записях журнала.
+- Подавлены лишние консольные ошибки при отсутствии отдельных event providers или пустых выборках.
+- Обновлённая версия `AnalizeV2.ps1` успешно протестирована из `C:\CodexTest` и отдельно из `C:\Stat`.
+- `AnalizeV2.ps1` дополнительно расширен в сторону forensic + inventory + config audit: добавлены `recent_issues`, `config_audit`, `consistency_checks`, `inventory`, `raw_evidence`.
+- В `recent_issues` теперь сохраняются классификация, критичность, confidence, impact area, human explanation, probable cause, recommendation и business impact.
+- В отчёт добавлены инвентаризационные массивы по установленному ПО, службам, задачам, автозагрузке и Windows updates.
+- В отчёт добавлены raw evidence массивы, чтобы по одному JSON можно было отвечать на большее число последующих вопросов без нового запуска.
+- Создана отдельная версия `AnalizeV3.ps1` как следующая ветка развития без изменения `AnalizeV2.ps1`.
+- В `Validate-Toolkit.ps1` добавлена проверка `AnalizeV3.ps1`.
+- `AnalizeV3.ps1` переведён на собственный выходной файл `C:\Stat\AnalizeV3.txt` и схему `3.0`.
+- В `AnalizeV3.ps1` добавлены новые блоки:
+  - сетевые адаптеры
+  - inventory application crashes
+  - история обновления драйверов
+  - потенциально конфликтующее ПО
+  - Deadline/render context
+- Копия `C:\Stat\AnalizeV3.ps1` размещена и успешно протестирована автономным запуском из `C:\Stat`.
+- Подтверждено создание `C:\Stat\AnalizeV3.txt` при запуске `AnalizeV3.ps1 -PeriodChoice 1`.
+- Подтверждена валидная структура `AnalizeV3.txt`: `schema_version = 3.0`, `selected_period = 2_days`, присутствуют `inventory`, `raw_evidence`, `ai_summary`, `diagnostics.recent_issues`.
+- На текущем тестовом прогоне `AnalizeV3.txt` содержит:
+  - `34` recent issues
+  - `5` findings
+  - `9` записей installed software
+  - `269` services
+  - `187` scheduled tasks
+  - `15` network adapters
+  - `1` application crash
+- Подтверждено, что текущая `AnalizeV3.ps1` не открывает окно `Power Options` при автономном запуске.
+- Создана отдельная версия `AnalizeV4.ps1` как следующая ветка развития после `v3`.
+- В `Validate-Toolkit.ps1` добавлена проверка `AnalizeV4.ps1`.
+- `AnalizeV4.ps1` переведён на собственный выходной файл `C:\Stat\AnalizeV4.txt` и схему `4.0`.
+- В `AnalizeV4.ps1` добавлены новые углубляющие блоки:
+  - полный `drivers_inventory`
+  - `storage_health`
+  - `reliability_metrics` и `reliability_records`
+  - более глубокий `deadline_context`
+  - структурированный `potentially_conflicting_software`
+  - расширенный `config_audit` без GUI-вызовов
+- Для `nvlddmkm 153` добавлен специализированный fallback-текст на случай пустого локализованного сообщения.
+- В ходе доводки `v4` исправлены runtime-ошибки PowerShell 5.1:
+  - возврат списка из `Get-StorageHealthInventory`
+  - обработка service/startup command lines с аргументами в `Deadline` context
+  - подавление шума от неподдерживаемых CIM/WMI-классов через `Get-CimSafe -ErrorAction Stop`
+- Копия `C:\Stat\AnalizeV4.ps1` размещена и успешно протестирована автономным запуском из `C:\Stat`.
+- Подтверждено создание `C:\Stat\AnalizeV4.txt` при запуске `AnalizeV4.ps1 -PeriodChoice 1`.
+- Подтверждена валидная структура `AnalizeV4.txt`: `schema_version = 4.0`, `selected_period = 2_days`, присутствуют новые разделы `drivers_inventory`, `storage_health`, `reliability_records`, `deadline_context`, `config_audit`.
+- На текущем тестовом прогоне `AnalizeV4.txt` содержит:
+  - `34` recent issues
+  - `5` findings
+  - `100` записей drivers inventory
+  - `1` запись storage health
+  - `63` reliability records
+  - `power_plan.name = Balanced`
+  - `fast_startup_enabled = enabled`
+- Подтверждено, что текущая `AnalizeV4.ps1` не открывает окно `Power Options` при автономном запуске.
+- Создана отдельная версия `AnalizeV5.ps1` как следующая ветка развития после `v4`.
+- В `Validate-Toolkit.ps1` добавлена проверка `AnalizeV5.ps1`.
+- `AnalizeV5.ps1` переведён на собственный выходной файл `C:\Stat\AnalizeV5.txt` и схему `5.0`.
+- В `AnalizeV5.ps1` исправлена root-cause проблема с путями и `Test-Path`:
+  - добавлена более безопасная нормализация path/command line
+  - добавлен `Test-SafePathLiteral`
+  - старая ошибка `Illegal characters in path` при автономном запуске больше не воспроизвелась
+- В `AnalizeV5.ps1` добавлены новые human-readable секции:
+  - `top_risks_now`
+  - `recommended_next_actions`
+  - `machine_overview.gpu_summary`
+- Добавлен дополнительный SMART/NVMe related слой через `MSStorageDriver_FailurePredictData`, если источник доступен.
+- Копия `C:\Stat\AnalizeV5.ps1` размещена и успешно протестирована автономным запуском из `C:\Stat`.
+- Подтверждено создание `C:\Stat\AnalizeV5.txt` при запуске `AnalizeV5.ps1 -PeriodChoice 5`.
+- Подтверждена валидная структура `AnalizeV5.txt`: `schema_version = 5.0`, присутствуют `top_risks_now`, `recommended_next_actions`, `machine_overview.gpu_summary`.
+- На текущем тестовом прогоне `AnalizeV5.txt` содержит:
+  - `5` записей `top_risks_now`
+  - `1` запись `recommended_next_actions`
+- Честно зафиксировано: в текущем тестовом окружении `reliability_metrics.time_generated` всё ещё не заполняется, хотя сами metrics/records доступны.
