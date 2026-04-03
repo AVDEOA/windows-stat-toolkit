@@ -9,3 +9,4 @@
 - Prepared a separate GitHub publication trail for the desktop analysis line so future work can continue from the compiled app architecture instead of falling back to the old script-first flow.
 - Published the `v0.5.0` analysis line on GitHub with branch `windows-stat-toolkit-analysis`, tag `windows-stat-toolkit-analysis-v0.5.0`, a release page, and a runnable `WindowsStatToolkit-v0.5.0-win-x64.zip` asset.
 - Promoted the collector design again for `v0.6.0`: the desktop app now prefers native Windows command collection over SSH and only falls back to PowerShell when native collection fails or the host is configured for explicit PowerShell mode.
+- Published the `v0.6.0` analysis line on GitHub with branch `windows-stat-toolkit-analysis`, tag `windows-stat-toolkit-analysis-v0.6.0`, a release page, and a runnable `WindowsStatToolkit-v0.6.0-win-x64.zip` asset.

@@ -5,7 +5,7 @@ Version target: `v0.6.0`
 Mode: single-agent by default, subagents only by trigger.
 
 ## Active package
-- Ship a native-first desktop diagnostics release after `v0.5.0`, with PowerShell reduced to fallback mode and the next continuation point clearly documented
+- Continue the published native-first desktop diagnostics line after `v0.6.0`, with focus on background execution, stronger tests, and persistent monitoring
 
 ## Required path
 - implement change

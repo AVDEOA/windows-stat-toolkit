@@ -20,4 +20,4 @@
 - [x] changelog
 - [x] dossier
 - [x] runtime snapshot
-- [ ] GitHub publication
+- [x] GitHub publication
