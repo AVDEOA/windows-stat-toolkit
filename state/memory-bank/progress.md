@@ -7,3 +7,4 @@
 - Delivered a first compiled `exe` concept for `v0.4.0` with host management, remote snapshots, capped AI bundles, block reports, and Telegram monitoring.
 - Refactored the desktop app toward `v0.5.0` with separated transport/orchestrator/domain layers closer to the structure used by `S3Drive`.
 - Prepared a separate GitHub publication trail for the desktop analysis line so future work can continue from the compiled app architecture instead of falling back to the old script-first flow.
+- Published the `v0.5.0` analysis line on GitHub with branch `windows-stat-toolkit-analysis`, tag `windows-stat-toolkit-analysis-v0.5.0`, a release page, and a runnable `WindowsStatToolkit-v0.5.0-win-x64.zip` asset.

@@ -15,3 +15,4 @@
 
 ## Notes
 - The transport is still SSH + remote PowerShell today, but the desktop app now depends on an interface boundary rather than embedding transport details into the window layer.
+- GitHub publication trail for this release uses branch `windows-stat-toolkit-analysis`, tag `windows-stat-toolkit-analysis-v0.5.0`, and the runnable asset `WindowsStatToolkit-v0.5.0-win-x64.zip`.

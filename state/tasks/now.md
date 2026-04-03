@@ -5,7 +5,7 @@ Version target: `v0.5.0`
 Mode: single-agent by default, subagents only by trigger.
 
 ## Active package
-- Publish the compiled desktop analysis line as its own GitHub branch/tag/release trail and preserve continuation context for the next chat
+- Continue the compiled desktop analysis line after `v0.5.0` publication, with focus on a more native diagnostics engine and persistent monitoring
 
 ## Required path
 - implement change

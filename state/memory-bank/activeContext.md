@@ -6,3 +6,7 @@
 - Current active package is `v0.5.0`: harden the desktop product architecture toward an `S3Drive`-level native app with separated transport, orchestration, and analysis layers.
 - The compiled desktop line is now being published through a separate analysis branch/tag trail so the AI/network diagnostics direction can evolve without losing product-scoped release discipline.
 - Resume context for the next chat is captured in `state/memory-bank/continuation.md`.
+- Published analysis trail:
+- branch: `windows-stat-toolkit-analysis`
+- tag: `windows-stat-toolkit-analysis-v0.5.0`
+- release: `https://github.com/AVDEOA/windows-stat-toolkit/releases/tag/windows-stat-toolkit-analysis-v0.5.0`

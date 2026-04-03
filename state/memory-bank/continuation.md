@@ -8,6 +8,8 @@
 - branch: `windows-stat-toolkit-analysis`
 - tag: `windows-stat-toolkit-analysis-v0.5.0`
 - asset target: `WindowsStatToolkit-v0.5.0-win-x64.zip`
+- release URL: `https://github.com/AVDEOA/windows-stat-toolkit/releases/tag/windows-stat-toolkit-analysis-v0.5.0`
+- asset URL: `https://github.com/AVDEOA/windows-stat-toolkit/releases/download/windows-stat-toolkit-analysis-v0.5.0/WindowsStatToolkit-v0.5.0-win-x64.zip`
 
 ## What Was Built
 

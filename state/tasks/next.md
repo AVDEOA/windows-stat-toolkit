@@ -7,3 +7,4 @@
 - [ ] Add password-based SSH auth UX or credential vault integration.
 - [ ] Promote monitoring from app-open loop to persistent Windows Service/agent mode.
 - [ ] Split analyzer generations from the active release path if only `AnalizeV9.ps1` stays user-facing.
+- [ ] Add a direct in-app `Analyze AI` pipeline that mirrors `AnalizeV9.ps1` coverage more closely while keeping machine-readable output compact.
