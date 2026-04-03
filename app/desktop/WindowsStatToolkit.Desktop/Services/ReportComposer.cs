@@ -26,7 +26,8 @@ public static class ReportComposer
                 host.Name,
                 host.Address,
                 host.UserName,
-                host.Tags
+                host.Tags,
+                host.TransportMode
             },
             collection = snapshot,
             findings = BuildFindingLines(snapshot),
@@ -94,6 +95,7 @@ public static class ReportComposer
                 host.Address,
                 host.UserName,
                 host.Tags,
+                host.TransportMode,
                 snapshot.Host.ComputerName,
                 snapshot.Host.OsCaption,
                 snapshot.Host.OsVersion,
@@ -131,11 +133,17 @@ public static class ReportComposer
         sb.AppendLine($"# PC Report - {host.Name}");
         sb.AppendLine();
         sb.AppendLine($"- Address: {host.Address}");
+        sb.AppendLine($"- Connection mode: {host.TransportMode}");
         sb.AppendLine($"- Computer: {snapshot.Host.ComputerName}");
         sb.AppendLine($"- OS: {snapshot.Host.OsCaption} {snapshot.Host.OsVersion}");
         sb.AppendLine($"- Last boot: {snapshot.Host.LastBoot}");
         sb.AppendLine($"- Uptime days: {snapshot.Host.UptimeDays}");
         sb.AppendLine($"- BIOS: {snapshot.Host.BiosVersion}");
+        sb.AppendLine($"- Collector: {snapshot.Collector.TransportName}");
+        if (snapshot.Collector.FallbackUsed)
+        {
+            sb.AppendLine("- Fallback: native collector failed and the PowerShell collector completed the snapshot");
+        }
         sb.AppendLine($"- CPU: {string.Join(", ", snapshot.Host.Cpu)}");
         sb.AppendLine($"- GPU: {string.Join(", ", snapshot.Host.Gpus)}");
         sb.AppendLine($"- Memory GB: {snapshot.Host.MemoryGb}");
@@ -169,8 +177,10 @@ public static class ReportComposer
         sb.AppendLine($"# {DiagnosticBlockCatalog.Get(blockId).Title} - {host.Name}");
         sb.AppendLine();
         sb.AppendLine($"- Address: {host.Address}");
+        sb.AppendLine($"- Connection mode: {host.TransportMode}");
         sb.AppendLine($"- Generated at: {snapshot.GeneratedAt}");
         sb.AppendLine($"- Range: {snapshot.PeriodLabel}");
+        sb.AppendLine($"- Collector: {snapshot.Collector.TransportName}");
         sb.AppendLine();
 
         switch (blockId)

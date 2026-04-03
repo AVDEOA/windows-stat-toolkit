@@ -32,6 +32,13 @@
 - Main window stopped acting as the central logic container and now delegates work to focused services.
 - Monitoring now runs through the orchestration layer instead of talking directly to the old collection service.
 
+### v0.6.0
+
+- Added a native-first SSH collector pipeline that gathers inventory and event evidence through standard Windows commands and parses them in C#.
+- Added a transport router so `auto` mode can prefer native collection and only fall back to PowerShell when native collection fails.
+- Added host-level transport mode selection to the desktop UI.
+- Added collector metadata to reports so saved output now records whether native or fallback collection produced the evidence.
+
 ## Continuation Notes
 
 - The compiled desktop app is now the canonical operator experience.

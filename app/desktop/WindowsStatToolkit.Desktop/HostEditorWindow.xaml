@@ -2,9 +2,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="PC connection"
-        Height="620"
+        Height="710"
         Width="620"
-        MinHeight="560"
+        MinHeight="640"
         MinWidth="560"
         WindowStartupLocation="CenterOwner"
         ResizeMode="CanResize"
@@ -32,6 +32,9 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="PC connection settings" FontSize="22" FontWeight="Bold" Foreground="#153448" />
@@ -45,7 +48,14 @@
                 <TextBlock Grid.Row="5" Margin="0,10,0,0" Text="SSH user" />
                 <TextBox Grid.Row="6" x:Name="UserTextBox" />
 
-                <UniformGrid Grid.Row="7" Columns="2" Margin="0,10,0,0">
+                <TextBlock Grid.Row="7" Margin="0,10,0,0" Text="Connection mode" />
+                <ComboBox Grid.Row="8" x:Name="TransportModeComboBox">
+                    <ComboBoxItem Tag="auto" Content="Auto: native SSH first, PowerShell fallback" />
+                    <ComboBoxItem Tag="ssh_native" Content="Native SSH only: cmd, wevtutil, wmic collectors" />
+                    <ComboBoxItem Tag="ssh_powershell" Content="PowerShell over SSH only" />
+                </ComboBox>
+
+                <UniformGrid Grid.Row="9" Columns="2" Margin="0,10,0,0">
                     <StackPanel Margin="0,0,8,0">
                         <TextBlock Text="SSH port" />
                         <TextBox x:Name="PortTextBox" Text="22" />
@@ -56,10 +66,11 @@
                     </StackPanel>
                 </UniformGrid>
 
-                <TextBlock Grid.Row="8" Margin="0,10,0,0" Text="Remote shell" />
-                <TextBox Grid.Row="9" x:Name="ShellTextBox" Text="powershell.exe" />
+                <TextBlock Grid.Row="10" Margin="0,10,0,0" Text="PowerShell fallback shell" />
+                <TextBlock Grid.Row="11" Foreground="#5E6C75" Text="Used only when the host runs in Auto mode and native SSH collection fails, or when PowerShell mode is selected." TextWrapping="Wrap" />
+                <TextBox Grid.Row="12" x:Name="ShellTextBox" Text="powershell.exe" />
 
-                <UniformGrid Grid.Row="10" Columns="2" Margin="0,10,0,0">
+                <UniformGrid Grid.Row="13" Columns="2" Margin="0,10,0,0">
                     <StackPanel Margin="0,0,8,0">
                         <TextBlock Text="Tags" />
                         <TextBox x:Name="TagsTextBox" />
@@ -70,7 +81,7 @@
                     </StackPanel>
                 </UniformGrid>
 
-                <UniformGrid Grid.Row="11" Columns="2" Margin="0,10,0,0">
+                <UniformGrid Grid.Row="14" Columns="2" Margin="0,10,0,0">
                     <StackPanel Margin="0,0,8,0">
                         <TextBlock Text="Ping failures before alert" />
                         <TextBox x:Name="PingFailuresTextBox" Text="3" />
@@ -80,8 +91,8 @@
                     </StackPanel>
                 </UniformGrid>
 
-                <TextBlock Grid.Row="12" Margin="0,10,0,0" Text="Notes" />
-                <TextBox Grid.Row="13" x:Name="NotesTextBox" Height="90" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+                <TextBlock Grid.Row="15" Margin="0,10,0,0" Text="Notes" />
+                <TextBox Grid.Row="16" x:Name="NotesTextBox" Height="90" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
             </Grid>
         </ScrollViewer>
 

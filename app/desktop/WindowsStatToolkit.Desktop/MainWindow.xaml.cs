@@ -11,7 +11,8 @@ namespace WindowsStatToolkit.Desktop;
 public partial class MainWindow : Window
 {
     private readonly AppStateService _stateService = new();
-    private readonly SshPowerShellDiagnosticsTransport _transport = new();
+    private readonly SshCommandRunner _sshCommandRunner = new();
+    private readonly DiagnosticsTransportRouter _transport;
     private readonly DiagnosticsOrchestrator _diagnosticsOrchestrator;
     private readonly TelegramAlertService _telegramAlertService = new(new HttpClient());
     private readonly MonitoringService _monitoringService;
@@ -21,6 +22,9 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        var nativeTransport = new SshNativeDiagnosticsTransport(_sshCommandRunner);
+        var powerShellTransport = new SshPowerShellDiagnosticsTransport(_sshCommandRunner);
+        _transport = new DiagnosticsTransportRouter(nativeTransport, powerShellTransport);
         _diagnosticsOrchestrator = new DiagnosticsOrchestrator(_transport);
         _monitoringService = new MonitoringService(_diagnosticsOrchestrator, _telegramAlertService);
         _monitoringService.Log += AppendLog;

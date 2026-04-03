@@ -9,6 +9,7 @@ In scope for the current toolkit:
 - safe validation to catch syntax and forbidden write operations
 - packaging the runnable script bundle for release downloads
 - SSH-based remote Windows diagnostics collection and AI-ready local bundle preparation
+- native-first SSH collection through standard Windows commands with PowerShell fallback when needed
 - Telegram alerting for selected monitoring events in concept form
 
 Out of scope for the current toolkit:

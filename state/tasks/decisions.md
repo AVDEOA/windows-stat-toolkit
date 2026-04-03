@@ -7,3 +7,4 @@
 - `2026-04-03`: after user clarification, promote the main operator experience to a GUI-first desktop workflow while preserving the CLI scripts as backend-compatible tools rather than the primary interface.
 - `2026-04-03`: for the first compiled concept, build a .NET 8 WPF desktop app that uses SSH + remote PowerShell as the network execution layer and keeps AI bundles capped at 30 MB.
 - `2026-04-03`: publish the compiled diagnostics desktop direction through a separate GitHub analysis trail using branch `windows-stat-toolkit-analysis` and product-scoped tag `windows-stat-toolkit-analysis-v0.5.0`.
+- `2026-04-03`: evolve the analysis branch to a native-first SSH collector pipeline that uses standard Windows commands over SSH and leaves PowerShell as fallback or explicit operator choice.

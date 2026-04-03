@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog.
 
+## [0.6.0] - 2026-04-03
+
+### Added
+- Added a native-first SSH diagnostics pipeline with `SshCommandRunner`, `SshNativeDiagnosticsTransport`, and `DiagnosticsTransportRouter`.
+- Added per-host connection modes so operators can choose `auto`, `ssh_native`, or `ssh_powershell`.
+- Added collector metadata into snapshots and reports so saved evidence shows which transport actually produced the data and whether fallback was used.
+
+### Changed
+- The desktop app now prefers native Windows commands over SSH such as `hostname`, `wmic`, and `wevtutil`, with PowerShell retained as an explicit mode and fallback path instead of the only collector.
+- Host editing and managed-host views now expose the active transport mode and explain the PowerShell fallback shell more clearly.
+
 ## [0.5.0] - 2026-04-03
 
 ### Added

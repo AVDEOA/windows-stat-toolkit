@@ -1,5 +1,3 @@
-using System.Diagnostics;
-using System.IO;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.Json;
@@ -8,7 +6,7 @@ using WindowsStatToolkit.Desktop.Models;
 
 namespace WindowsStatToolkit.Desktop.Services;
 
-public sealed class SshPowerShellDiagnosticsTransport : IRemoteDiagnosticsTransport
+public sealed class SshPowerShellDiagnosticsTransport(SshCommandRunner commandRunner) : IRemoteDiagnosticsTransport
 {
     private readonly JsonSerializerOptions _jsonOptions = new()
     {
@@ -22,69 +20,27 @@ public sealed class SshPowerShellDiagnosticsTransport : IRemoteDiagnosticsTransp
         return reply.Status == IPStatus.Success;
     }
 
-    public async Task<DiagnosticSnapshot> CollectSnapshotAsync(HostDefinition host, DiagnosticQuery query, CancellationToken cancellationToken)
+    public async Task<DiagnosticSnapshot> CollectSnapshotAsync(
+        HostDefinition host,
+        DiagnosticQuery query,
+        CancellationToken cancellationToken)
     {
         var script = BuildSnapshotScript(query.Days, query.MaxEventsPerCategory);
-        var output = await InvokePowerShellOverSshAsync(host, script, cancellationToken);
-        var json = ExtractJsonPayload(output);
-        return JsonSerializer.Deserialize<DiagnosticSnapshot>(json, _jsonOptions)
-            ?? throw new InvalidOperationException("Failed to deserialize diagnostic snapshot.");
-    }
-
-    private async Task<string> InvokePowerShellOverSshAsync(HostDefinition host, string script, CancellationToken cancellationToken)
-    {
-        var sshPath = ResolveSshPath();
         var encoded = Convert.ToBase64String(Encoding.Unicode.GetBytes(script));
+        var shell = string.IsNullOrWhiteSpace(host.Shell) ? "powershell.exe" : host.Shell;
+        var output = await commandRunner.RunCommandAsync(
+            host,
+            shell,
+            ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-EncodedCommand", encoded],
+            cancellationToken);
 
-        var psi = new ProcessStartInfo
-        {
-            FileName = sshPath,
-            RedirectStandardError = true,
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        };
+        var json = ExtractJsonPayload(output);
+        var snapshot = JsonSerializer.Deserialize<DiagnosticSnapshot>(json, _jsonOptions)
+            ?? throw new InvalidOperationException("Failed to deserialize diagnostic snapshot.");
 
-        psi.ArgumentList.Add("-o");
-        psi.ArgumentList.Add("BatchMode=yes");
-        psi.ArgumentList.Add("-o");
-        psi.ArgumentList.Add("ConnectTimeout=10");
-        psi.ArgumentList.Add("-o");
-        psi.ArgumentList.Add("StrictHostKeyChecking=accept-new");
-        psi.ArgumentList.Add("-p");
-        psi.ArgumentList.Add(host.Port.ToString());
-
-        if (!string.IsNullOrWhiteSpace(host.KeyPath))
-        {
-            psi.ArgumentList.Add("-i");
-            psi.ArgumentList.Add(host.KeyPath);
-        }
-
-        psi.ArgumentList.Add($"{host.UserName}@{host.Address}");
-        psi.ArgumentList.Add(string.IsNullOrWhiteSpace(host.Shell) ? "powershell.exe" : host.Shell);
-        psi.ArgumentList.Add("-NoProfile");
-        psi.ArgumentList.Add("-NonInteractive");
-        psi.ArgumentList.Add("-ExecutionPolicy");
-        psi.ArgumentList.Add("Bypass");
-        psi.ArgumentList.Add("-EncodedCommand");
-        psi.ArgumentList.Add(encoded);
-
-        using var process = new Process { StartInfo = psi };
-        process.Start();
-
-        var stdoutTask = process.StandardOutput.ReadToEndAsync(cancellationToken);
-        var stderrTask = process.StandardError.ReadToEndAsync(cancellationToken);
-        await process.WaitForExitAsync(cancellationToken);
-
-        var stdout = await stdoutTask;
-        var stderr = await stderrTask;
-
-        if (process.ExitCode != 0)
-        {
-            throw new InvalidOperationException($"SSH command failed for {host.Name}: {stderr}{Environment.NewLine}{stdout}".Trim());
-        }
-
-        return stdout;
+        snapshot.Collector.TransportName = "ssh_powershell";
+        snapshot.Collector.RequestedMode = "ssh_powershell";
+        return snapshot;
     }
 
     private static string ExtractJsonPayload(string output)
@@ -99,22 +55,6 @@ public sealed class SshPowerShellDiagnosticsTransport : IRemoteDiagnosticsTransp
         }
 
         return candidate;
-    }
-
-    private static string ResolveSshPath()
-    {
-        var windowsPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.Windows),
-            "System32",
-            "OpenSSH",
-            "ssh.exe");
-
-        if (File.Exists(windowsPath))
-        {
-            return windowsPath;
-        }
-
-        return "ssh.exe";
     }
 
     private static string BuildSnapshotScript(int? days, int maxEventsPerCategory)
@@ -231,6 +171,12 @@ $result = [ordered]@{
     period_label = '{{periodLabel}}'
     period_days = {{periodDaysLiteral}}
     start_time = $startTime.ToString('yyyy-MM-dd HH:mm:ss')
+    collector = [ordered]@{
+        requested_mode = 'ssh_powershell'
+        transport_name = 'ssh_powershell'
+        fallback_used = $false
+        warnings = @()
+    }
     host = [ordered]@{
         computer_name = $env:COMPUTERNAME
         os_caption = Invoke-Safely -Fallback $null -ScriptBlock { $os.Caption }

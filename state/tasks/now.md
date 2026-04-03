@@ -1,11 +1,11 @@
 # Now
 
 Product: `windows-stat-toolkit`
-Version target: `v0.5.0`
+Version target: `v0.6.0`
 Mode: single-agent by default, subagents only by trigger.
 
 ## Active package
-- Continue the compiled desktop analysis line after `v0.5.0` publication, with focus on a more native diagnostics engine and persistent monitoring
+- Ship a native-first desktop diagnostics release after `v0.5.0`, with PowerShell reduced to fallback mode and the next continuation point clearly documented
 
 ## Required path
 - implement change

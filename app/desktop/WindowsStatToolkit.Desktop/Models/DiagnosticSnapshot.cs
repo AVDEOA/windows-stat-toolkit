@@ -16,11 +16,29 @@ public sealed class DiagnosticSnapshot
     [JsonPropertyName("start_time")]
     public string StartTime { get; set; } = string.Empty;
 
+    [JsonPropertyName("collector")]
+    public CollectorMetadata Collector { get; set; } = new();
+
     [JsonPropertyName("host")]
     public HostInventory Host { get; set; } = new();
 
     [JsonPropertyName("categories")]
     public Dictionary<string, DiagnosticCategory> Categories { get; set; } = [];
+}
+
+public sealed class CollectorMetadata
+{
+    [JsonPropertyName("requested_mode")]
+    public string RequestedMode { get; set; } = string.Empty;
+
+    [JsonPropertyName("transport_name")]
+    public string TransportName { get; set; } = string.Empty;
+
+    [JsonPropertyName("fallback_used")]
+    public bool FallbackUsed { get; set; }
+
+    [JsonPropertyName("warnings")]
+    public List<string> Warnings { get; set; } = [];
 }
 
 public sealed class HostInventory

@@ -26,7 +26,7 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <TextBlock Text="Windows Stat Toolkit" Foreground="#FFF7E8" FontSize="30" FontWeight="Bold" />
-                    <TextBlock Text="Concept v1 desktop exe for network diagnostics, AI bundles, and Telegram alerts" Margin="0,8,0,0" Foreground="#D8E6EA" FontSize="15" />
+                    <TextBlock Text="Native-first desktop diagnostics for Windows PCs with AI bundles, block reports, and Telegram alerts" Margin="0,8,0,0" Foreground="#D8E6EA" FontSize="15" />
                 </StackPanel>
                 <Border Grid.Column="1" Background="#214D63" CornerRadius="14" Padding="14">
                     <StackPanel>
@@ -69,6 +69,7 @@
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="1.1*" MinWidth="120" />
                                 <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="1.4*" MinWidth="150" />
+                                <DataGridTextColumn Header="Mode" Binding="{Binding TransportMode}" Width="1.15*" MinWidth="120" />
                                 <DataGridTextColumn Header="User" Binding="{Binding UserName}" Width="1*" MinWidth="110" />
                                 <DataGridTextColumn Header="Port" Binding="{Binding Port}" Width="70" />
                                 <DataGridTextColumn Header="Tags" Binding="{Binding Tags}" Width="1.1*" MinWidth="120" />
@@ -155,9 +156,10 @@
                 <Border Grid.Row="1" Margin="0,16,0,16" Background="#F8F4EA" CornerRadius="14" Padding="16">
                     <StackPanel>
                         <TextBlock Text="Concept notes" FontSize="18" FontWeight="Bold" Foreground="#153448" />
-                        <TextBlock Margin="0,12,0,0" Text="- SSH access uses key or agent-based auth through ssh.exe." TextWrapping="Wrap" />
+                        <TextBlock Margin="0,12,0,0" Text="- Auto mode now uses a native SSH collector first: hostname, wmic, wevtutil, and command parsing in C#." TextWrapping="Wrap" />
+                        <TextBlock Margin="0,6,0,0" Text="- PowerShell over SSH remains available as an explicit mode and as a fallback when native collection cannot complete." TextWrapping="Wrap" />
                         <TextBlock Margin="0,6,0,0" Text="- AI bundle is JSON-first and aggressively trimmed to stay within 30 MB if noisy event categories overflow." TextWrapping="Wrap" />
-                        <TextBlock Margin="0,6,0,0" Text="- Monitoring in v1 works while the app is running: ping loss, low disk space, and new critical error categories trigger Telegram alerts." TextWrapping="Wrap" />
+                        <TextBlock Margin="0,6,0,0" Text="- Monitoring in v1 still works while the app is running: ping loss, low disk space, and new critical error categories trigger Telegram alerts." TextWrapping="Wrap" />
                     </StackPanel>
                 </Border>
 

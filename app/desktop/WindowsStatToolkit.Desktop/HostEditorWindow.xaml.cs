@@ -20,6 +20,7 @@ public partial class HostEditorWindow : Window
             NameTextBox.Text = existing.Name;
             AddressTextBox.Text = existing.Address;
             UserTextBox.Text = existing.UserName;
+            SelectTransportMode(existing.TransportMode);
             PortTextBox.Text = existing.Port.ToString();
             KeyPathTextBox.Text = existing.KeyPath;
             ShellTextBox.Text = existing.Shell;
@@ -28,6 +29,10 @@ public partial class HostEditorWindow : Window
             DiskThresholdTextBox.Text = existing.DiskFreeThresholdGb.ToString();
             PingFailuresTextBox.Text = existing.PingFailuresBeforeAlert.ToString();
             MonitoringEnabledCheckBox.IsChecked = existing.MonitoringEnabled;
+        }
+        else
+        {
+            SelectTransportMode("auto");
         }
 
         SaveButton.Click += (_, _) => SaveAndClose();
@@ -49,6 +54,7 @@ public partial class HostEditorWindow : Window
             Id = _existingId ?? Guid.NewGuid(),
             Name = NameTextBox.Text.Trim(),
             Address = AddressTextBox.Text.Trim(),
+            TransportMode = ((TransportModeComboBox.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Tag as string) ?? "auto",
             UserName = UserTextBox.Text.Trim(),
             Port = ParsePositiveInt(PortTextBox.Text, 22),
             KeyPath = KeyPathTextBox.Text.Trim(),
@@ -62,6 +68,21 @@ public partial class HostEditorWindow : Window
 
         DialogResult = true;
         Close();
+    }
+
+    private void SelectTransportMode(string? mode)
+    {
+        var normalized = string.IsNullOrWhiteSpace(mode) ? "auto" : mode.Trim().ToLowerInvariant();
+        foreach (var item in TransportModeComboBox.Items.OfType<System.Windows.Controls.ComboBoxItem>())
+        {
+            if (string.Equals(item.Tag as string, normalized, StringComparison.OrdinalIgnoreCase))
+            {
+                TransportModeComboBox.SelectedItem = item;
+                return;
+            }
+        }
+
+        TransportModeComboBox.SelectedIndex = 0;
     }
 
     private static int ParsePositiveInt(string text, int fallback)

@@ -17,3 +17,4 @@ Notes:
 - Release-ready work finishes with version bump, dossier, rebuild, runtime snapshot, and GitHub publication.
 - Main desktop entrypoint: `artifacts\desktop-publish\WindowsStatToolkit.Desktop.exe`
 - Legacy PowerShell GUI and remote CLI remain available under `app\src\`.
+- The desktop app now prefers native SSH collection and falls back to PowerShell when the host is configured for `auto`.
