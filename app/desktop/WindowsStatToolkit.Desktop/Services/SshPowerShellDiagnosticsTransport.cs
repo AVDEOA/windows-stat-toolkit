@@ -20,6 +20,22 @@ public sealed class SshPowerShellDiagnosticsTransport(SshCommandRunner commandRu
         return reply.Status == IPStatus.Success;
     }
 
+    public async Task<TransportProbeResult> TestConnectivityAsync(HostDefinition host, CancellationToken cancellationToken)
+    {
+        var shell = string.IsNullOrWhiteSpace(host.Shell) ? "powershell.exe" : host.Shell;
+        var output = await commandRunner.RunCommandTextAsync(
+            host,
+            $"{QuoteArg(shell)} -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command \"$env:COMPUTERNAME\"",
+            cancellationToken);
+
+        return new TransportProbeResult
+        {
+            TransportName = "ssh_powershell",
+            Summary = "PowerShell over SSH succeeded.",
+            RemoteIdentity = output.Trim()
+        };
+    }
+
     public async Task<DiagnosticSnapshot> CollectSnapshotAsync(
         HostDefinition host,
         DiagnosticQuery query,
@@ -28,10 +44,9 @@ public sealed class SshPowerShellDiagnosticsTransport(SshCommandRunner commandRu
         var script = BuildSnapshotScript(query.Days, query.MaxEventsPerCategory);
         var encoded = Convert.ToBase64String(Encoding.Unicode.GetBytes(script));
         var shell = string.IsNullOrWhiteSpace(host.Shell) ? "powershell.exe" : host.Shell;
-        var output = await commandRunner.RunCommandAsync(
+        var output = await commandRunner.RunCommandTextAsync(
             host,
-            shell,
-            ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-EncodedCommand", encoded],
+            $"{QuoteArg(shell)} -NoProfile -NonInteractive -ExecutionPolicy Bypass -EncodedCommand {encoded}",
             cancellationToken);
 
         var json = ExtractJsonPayload(output);
@@ -41,6 +56,11 @@ public sealed class SshPowerShellDiagnosticsTransport(SshCommandRunner commandRu
         snapshot.Collector.TransportName = "ssh_powershell";
         snapshot.Collector.RequestedMode = "ssh_powershell";
         return snapshot;
+    }
+
+    private static string QuoteArg(string value)
+    {
+        return value.Contains(' ') ? $"\"{value}\"" : value;
     }
 
     private static string ExtractJsonPayload(string output)

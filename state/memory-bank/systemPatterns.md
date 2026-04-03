@@ -7,6 +7,7 @@
 - The desktop app now prefers a native SSH collector path that gathers `hostname`, `wmic`, and `wevtutil` output and classifies it in C#, with PowerShell retained as a fallback collector.
 - The native app is now split into transport (`IRemoteDiagnosticsTransport`), orchestration (`DiagnosticsOrchestrator`), monitoring, report composition, and UI layers.
 - Host definitions include a transport mode so operators can choose `auto`, `ssh_native`, or `ssh_powershell`.
+- SSH command execution now runs through an embedded SSH client with saved host fingerprints and protected local password storage instead of shelling out to `ssh.exe`.
 - AI bundle generation is JSON-first and must stay within a 30 MB ceiling by trimming noisy categories when needed.
 - Rebuild prepares both script and desktop source bundles, while build publishes a self-contained desktop binary.
 - Remote diagnostics writes mutable runtime state under `app/src/state/remote-diagnostics/`, which stays outside versioned source control.

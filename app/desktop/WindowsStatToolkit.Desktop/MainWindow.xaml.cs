@@ -45,6 +45,7 @@ public partial class MainWindow : Window
         HostsGrid.MouseDoubleClick += async (_, _) => await EditSelectedHostAsync();
         NewHostButton.Click += async (_, _) => await CreateNewHostAsync();
         EditHostButton.Click += async (_, _) => await EditSelectedHostAsync();
+        TestHostButton.Click += async (_, _) => await TestSelectedHostAsync();
         DeleteHostButton.Click += async (_, _) => await DeleteHostAsync();
         RefreshHostsButton.Click += (_, _) => RefreshHostsGrid();
         SaveSettingsButton.Click += async (_, _) => await SaveSettingsAsync();
@@ -93,7 +94,7 @@ public partial class MainWindow : Window
 
     private async Task CreateNewHostAsync()
     {
-        var editor = new HostEditorWindow
+        var editor = new HostEditorWindow(testConnectionAsync: TestHostConnectionAsync)
         {
             Owner = this
         };
@@ -107,7 +108,7 @@ public partial class MainWindow : Window
     private async Task EditSelectedHostAsync()
     {
         var selected = GetSelectedHost();
-        var editor = new HostEditorWindow(selected)
+        var editor = new HostEditorWindow(selected, TestHostConnectionAsync)
         {
             Owner = this
         };
@@ -190,6 +191,8 @@ public partial class MainWindow : Window
             AppendLog($"Collecting snapshot from {host.Name}. Mode: {mode}. Range: {range.Label}.");
 
             var report = await _diagnosticsOrchestrator.GenerateReportAsync(host, range.Days, mode, CancellationToken.None);
+            await _stateService.SaveAsync(_state);
+            RefreshHostsGrid();
             var path = await _stateService.SaveReportAsync(host.Name, report.Suffix, report.Extension, report.Content);
             PreviewTextBox.Text = report.Content;
             StatusText.Text = $"Saved report: {Path.GetFileName(path)}";
@@ -245,8 +248,39 @@ public partial class MainWindow : Window
 
     private void ShowError(string message)
     {
-        StatusText.Text = $"Error: {message}";
-        AppendLog($"Error: {message}");
-        MessageBox.Show(message, "Windows Stat Toolkit", MessageBoxButton.OK, MessageBoxImage.Error);
+        var friendly = ToFriendlyError(message);
+        StatusText.Text = $"Error: {friendly}";
+        AppendLog($"Error: {friendly}");
+        MessageBox.Show(friendly, "Windows Stat Toolkit", MessageBoxButton.OK, MessageBoxImage.Error);
+    }
+
+    private async Task TestSelectedHostAsync()
+    {
+        try
+        {
+            var host = GetSelectedHost();
+            var result = await TestHostConnectionAsync(host, CancellationToken.None);
+            StatusText.Text = $"SSH test succeeded for {host.Name} via {result.TransportName}.";
+            AppendLog($"SSH test succeeded for {host.Name}. Transport: {result.TransportName}. Remote: {result.RemoteIdentity}.");
+            PreviewTextBox.Text = $"Transport: {result.TransportName}{Environment.NewLine}Fallback used: {result.FallbackUsed}{Environment.NewLine}Remote host: {result.RemoteIdentity}{Environment.NewLine}{result.Summary}";
+        }
+        catch (Exception ex)
+        {
+            ShowError(ex.Message);
+        }
+    }
+
+    private async Task<TransportProbeResult> TestHostConnectionAsync(HostDefinition host, CancellationToken cancellationToken)
+    {
+        var result = await _diagnosticsOrchestrator.TestConnectivityAsync(host, cancellationToken);
+        await _stateService.SaveAsync(_state);
+        RefreshHostsGrid();
+        return result;
+    }
+
+    private static string ToFriendlyError(string message)
+    {
+        var compact = message.Replace(Environment.NewLine, " ").Replace('\n', ' ').Replace('\r', ' ').Trim();
+        return compact.Length <= 360 ? compact : $"{compact[..360]}...";
     }
 }

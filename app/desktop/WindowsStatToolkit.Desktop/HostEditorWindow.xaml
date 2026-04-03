@@ -35,6 +35,11 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="PC connection settings" FontSize="22" FontWeight="Bold" Foreground="#153448" />
@@ -48,14 +53,17 @@
                 <TextBlock Grid.Row="5" Margin="0,10,0,0" Text="SSH user" />
                 <TextBox Grid.Row="6" x:Name="UserTextBox" />
 
-                <TextBlock Grid.Row="7" Margin="0,10,0,0" Text="Connection mode" />
-                <ComboBox Grid.Row="8" x:Name="TransportModeComboBox">
+                <TextBlock Grid.Row="7" Margin="0,10,0,0" Text="SSH password" />
+                <PasswordBox Grid.Row="8" x:Name="PasswordTextBox" />
+
+                <TextBlock Grid.Row="9" Margin="0,10,0,0" Text="Connection mode" />
+                <ComboBox Grid.Row="10" x:Name="TransportModeComboBox">
                     <ComboBoxItem Tag="auto" Content="Auto: native SSH first, PowerShell fallback" />
                     <ComboBoxItem Tag="ssh_native" Content="Native SSH only: cmd, wevtutil, wmic collectors" />
                     <ComboBoxItem Tag="ssh_powershell" Content="PowerShell over SSH only" />
                 </ComboBox>
 
-                <UniformGrid Grid.Row="9" Columns="2" Margin="0,10,0,0">
+                <UniformGrid Grid.Row="11" Columns="2" Margin="0,10,0,0">
                     <StackPanel Margin="0,0,8,0">
                         <TextBlock Text="SSH port" />
                         <TextBox x:Name="PortTextBox" Text="22" />
@@ -66,11 +74,15 @@
                     </StackPanel>
                 </UniformGrid>
 
-                <TextBlock Grid.Row="10" Margin="0,10,0,0" Text="PowerShell fallback shell" />
-                <TextBlock Grid.Row="11" Foreground="#5E6C75" Text="Used only when the host runs in Auto mode and native SSH collection fails, or when PowerShell mode is selected." TextWrapping="Wrap" />
-                <TextBox Grid.Row="12" x:Name="ShellTextBox" Text="powershell.exe" />
+                <TextBlock Grid.Row="12" Margin="0,10,0,0" Text="Saved SSH host fingerprint" />
+                <TextBlock Grid.Row="13" Foreground="#5E6C75" Text="On the first successful SSH connection the program automatically accepts and saves the host fingerprint. If it later changes, the connection is blocked." TextWrapping="Wrap" />
+                <TextBox Grid.Row="14" x:Name="KnownFingerprintTextBox" IsReadOnly="True" />
 
-                <UniformGrid Grid.Row="13" Columns="2" Margin="0,10,0,0">
+                <TextBlock Grid.Row="15" Margin="0,10,0,0" Text="PowerShell fallback shell" />
+                <TextBlock Grid.Row="16" Foreground="#5E6C75" Text="Used only when the host runs in Auto mode and native SSH collection fails, or when PowerShell mode is selected." TextWrapping="Wrap" />
+                <TextBox Grid.Row="17" x:Name="ShellTextBox" Text="powershell.exe" />
+
+                <UniformGrid Grid.Row="18" Columns="2" Margin="0,10,0,0">
                     <StackPanel Margin="0,0,8,0">
                         <TextBlock Text="Tags" />
                         <TextBox x:Name="TagsTextBox" />
@@ -81,7 +93,7 @@
                     </StackPanel>
                 </UniformGrid>
 
-                <UniformGrid Grid.Row="14" Columns="2" Margin="0,10,0,0">
+                <UniformGrid Grid.Row="19" Columns="2" Margin="0,10,0,0">
                     <StackPanel Margin="0,0,8,0">
                         <TextBlock Text="Ping failures before alert" />
                         <TextBox x:Name="PingFailuresTextBox" Text="3" />
@@ -91,12 +103,13 @@
                     </StackPanel>
                 </UniformGrid>
 
-                <TextBlock Grid.Row="15" Margin="0,10,0,0" Text="Notes" />
-                <TextBox Grid.Row="16" x:Name="NotesTextBox" Height="90" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+                <TextBlock Grid.Row="20" Margin="0,10,0,0" Text="Notes" />
+                <TextBox Grid.Row="21" x:Name="NotesTextBox" Height="90" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
             </Grid>
         </ScrollViewer>
 
         <WrapPanel Grid.Row="1" Margin="0,16,0,0" HorizontalAlignment="Right">
+            <Button x:Name="TestButton" Content="Test SSH" Margin="0,0,8,0" Padding="14,8" />
             <Button x:Name="CancelButton" Content="Cancel" Margin="0,0,8,0" Padding="14,8" />
             <Button x:Name="SaveButton" Content="Save PC" Padding="14,8" />
         </WrapPanel>

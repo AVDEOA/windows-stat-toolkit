@@ -12,6 +12,33 @@ public sealed class DiagnosticsTransportRouter(
         return await nativeTransport.PingHostAsync(host);
     }
 
+    public async Task<TransportProbeResult> TestConnectivityAsync(HostDefinition host, CancellationToken cancellationToken)
+    {
+        var requestedMode = NormalizeMode(host.TransportMode);
+
+        if (requestedMode == "ssh_native")
+        {
+            return await nativeTransport.TestConnectivityAsync(host, cancellationToken);
+        }
+
+        if (requestedMode == "ssh_powershell")
+        {
+            return await powerShellTransport.TestConnectivityAsync(host, cancellationToken);
+        }
+
+        try
+        {
+            return await nativeTransport.TestConnectivityAsync(host, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            var fallback = await powerShellTransport.TestConnectivityAsync(host, cancellationToken);
+            fallback.FallbackUsed = true;
+            fallback.Summary = $"Auto mode fell back to PowerShell. Native probe failed: {ex.Message}";
+            return fallback;
+        }
+    }
+
     public async Task<DiagnosticSnapshot> CollectSnapshotAsync(
         HostDefinition host,
         DiagnosticQuery query,

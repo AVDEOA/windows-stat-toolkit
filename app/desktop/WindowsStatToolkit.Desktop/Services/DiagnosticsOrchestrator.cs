@@ -10,6 +10,11 @@ public sealed class DiagnosticsOrchestrator(IRemoteDiagnosticsTransport transpor
         return await transport.PingHostAsync(host);
     }
 
+    public async Task<TransportProbeResult> TestConnectivityAsync(HostDefinition host, CancellationToken cancellationToken)
+    {
+        return await transport.TestConnectivityAsync(host, cancellationToken);
+    }
+
     public async Task<DiagnosticSnapshot> CollectSnapshotAsync(HostDefinition host, int? days, int maxEventsPerCategory, CancellationToken cancellationToken)
     {
         var query = new DiagnosticQuery(days, maxEventsPerCategory);

@@ -1,82 +1,128 @@
-using System.Diagnostics;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using Renci.SshNet;
+using Renci.SshNet.Common;
 using WindowsStatToolkit.Desktop.Models;
 
 namespace WindowsStatToolkit.Desktop.Services;
 
 public sealed class SshCommandRunner
 {
-    public async Task<string> RunCommandAsync(
+    public async Task<string> RunCommandTextAsync(
         HostDefinition host,
-        string executable,
-        IReadOnlyList<string> arguments,
+        string commandText,
         CancellationToken cancellationToken)
     {
-        var sshPath = ResolveSshPath();
-        var psi = new ProcessStartInfo
+        return await Task.Run(() =>
         {
-            FileName = sshPath,
-            RedirectStandardError = true,
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
+            using var client = CreateClient(host);
+            client.Connect();
+            try
+            {
+                using var command = client.CreateCommand(commandText);
+                command.CommandTimeout = TimeSpan.FromMinutes(3);
+                var stdout = command.Execute();
+                var stderr = command.Error?.Trim() ?? string.Empty;
+
+                if (command.ExitStatus != 0)
+                {
+                    throw new InvalidOperationException(
+                        $"Remote command failed on {host.Name}. Exit status: {command.ExitStatus}. {TrimForUi(stderr)}");
+                }
+
+                return stdout ?? string.Empty;
+            }
+            finally
+            {
+                if (client.IsConnected)
+                {
+                    client.Disconnect();
+                }
+            }
+        }, cancellationToken);
+    }
+
+    public async Task<string> TestConnectivityAsync(HostDefinition host, CancellationToken cancellationToken)
+    {
+        return await RunCommandTextAsync(host, @"cmd.exe /c hostname", cancellationToken);
+    }
+
+    private static SshClient CreateClient(HostDefinition host)
+    {
+        var authenticationMethods = CreateAuthenticationMethods(host);
+        var connectionInfo = new ConnectionInfo(host.Address, host.Port, host.UserName, authenticationMethods.ToArray())
+        {
+            Timeout = TimeSpan.FromSeconds(20)
         };
 
-        psi.ArgumentList.Add("-o");
-        psi.ArgumentList.Add("BatchMode=yes");
-        psi.ArgumentList.Add("-o");
-        psi.ArgumentList.Add("ConnectTimeout=10");
-        psi.ArgumentList.Add("-o");
-        psi.ArgumentList.Add("StrictHostKeyChecking=accept-new");
-        psi.ArgumentList.Add("-p");
-        psi.ArgumentList.Add(host.Port.ToString());
+        var client = new SshClient(connectionInfo);
+        client.HostKeyReceived += (_, args) =>
+        {
+            var fingerprint = BuildFingerprint(args.HostKey);
+            if (string.IsNullOrWhiteSpace(host.KnownHostFingerprint))
+            {
+                host.KnownHostFingerprint = fingerprint;
+                args.CanTrust = true;
+                return;
+            }
+
+            if (string.Equals(host.KnownHostFingerprint, fingerprint, StringComparison.OrdinalIgnoreCase))
+            {
+                args.CanTrust = true;
+                return;
+            }
+
+            throw new InvalidOperationException(
+                $"SSH host key mismatch for {host.Name}. Saved fingerprint: {host.KnownHostFingerprint}. Current fingerprint: {fingerprint}.");
+        };
+
+        return client;
+    }
+
+    private static List<AuthenticationMethod> CreateAuthenticationMethods(HostDefinition host)
+    {
+        var methods = new List<AuthenticationMethod>();
+        var password = SecretProtector.Unprotect(host.PasswordProtected);
 
         if (!string.IsNullOrWhiteSpace(host.KeyPath))
         {
-            psi.ArgumentList.Add("-i");
-            psi.ArgumentList.Add(host.KeyPath);
+            if (!File.Exists(host.KeyPath))
+            {
+                throw new InvalidOperationException($"SSH key file not found: {host.KeyPath}");
+            }
+
+            methods.Add(new PrivateKeyAuthenticationMethod(host.UserName, new PrivateKeyFile(host.KeyPath)));
         }
 
-        psi.ArgumentList.Add($"{host.UserName}@{host.Address}");
-        psi.ArgumentList.Add(executable);
-
-        foreach (var argument in arguments)
+        if (!string.IsNullOrWhiteSpace(password))
         {
-            psi.ArgumentList.Add(argument);
+            methods.Add(new PasswordAuthenticationMethod(host.UserName, password));
         }
 
-        using var process = new Process { StartInfo = psi };
-        process.Start();
-
-        var stdoutTask = process.StandardOutput.ReadToEndAsync(cancellationToken);
-        var stderrTask = process.StandardError.ReadToEndAsync(cancellationToken);
-        await process.WaitForExitAsync(cancellationToken);
-
-        var stdout = await stdoutTask;
-        var stderr = await stderrTask;
-
-        if (process.ExitCode != 0)
+        if (methods.Count == 0)
         {
             throw new InvalidOperationException(
-                $"SSH command failed for {host.Name}: {executable} {string.Join(' ', arguments)}{Environment.NewLine}{stderr}{Environment.NewLine}{stdout}".Trim());
+                "SSH authentication is not configured. Fill in either an SSH password or an SSH key path.");
         }
 
-        return stdout;
+        return methods;
     }
 
-    private static string ResolveSshPath()
+    private static string BuildFingerprint(byte[] hostKey)
     {
-        var windowsPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.Windows),
-            "System32",
-            "OpenSSH",
-            "ssh.exe");
+        var hash = SHA256.HashData(hostKey);
+        return $"SHA256:{Convert.ToBase64String(hash)}";
+    }
 
-        if (File.Exists(windowsPath))
+    private static string TrimForUi(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
         {
-            return windowsPath;
+            return "No remote error text was returned.";
         }
 
-        return "ssh.exe";
+        var compact = value.Replace(Environment.NewLine, " ").Replace('\n', ' ').Replace('\r', ' ').Trim();
+        return compact.Length <= 320 ? compact : $"{compact[..320]}...";
     }
 }

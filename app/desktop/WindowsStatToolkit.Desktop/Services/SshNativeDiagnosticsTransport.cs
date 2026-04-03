@@ -48,6 +48,17 @@ public sealed partial class SshNativeDiagnosticsTransport(SshCommandRunner comma
         return reply.Status == IPStatus.Success;
     }
 
+    public async Task<TransportProbeResult> TestConnectivityAsync(HostDefinition host, CancellationToken cancellationToken)
+    {
+        var identity = await RunSimpleCommandAsync(host, "hostname", cancellationToken);
+        return new TransportProbeResult
+        {
+            TransportName = "ssh_native",
+            Summary = "Native SSH collector succeeded.",
+            RemoteIdentity = identity.Trim()
+        };
+    }
+
     public async Task<DiagnosticSnapshot> CollectSnapshotAsync(
         HostDefinition host,
         DiagnosticQuery query,
@@ -159,7 +170,27 @@ public sealed partial class SshNativeDiagnosticsTransport(SshCommandRunner comma
         IReadOnlyList<string> arguments,
         CancellationToken cancellationToken)
     {
-        return (await commandRunner.RunCommandAsync(host, executable, arguments, cancellationToken)).Trim();
+        return (await commandRunner.RunCommandTextAsync(host, BuildWindowsCommand(executable, arguments), cancellationToken)).Trim();
+    }
+
+    private static string BuildWindowsCommand(string executable, IReadOnlyList<string> arguments)
+    {
+        var parts = new List<string> { QuoteCmd(executable) };
+        parts.AddRange(arguments.Select(QuoteCmd));
+        return $"cmd.exe /c {string.Join(' ', parts)}";
+    }
+
+    private static string QuoteCmd(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "\"\"";
+        }
+
+        var escaped = value.Replace("\"", "\\\"");
+        return value.Any(ch => char.IsWhiteSpace(ch) || ch is '&' or '(' or ')' or '=' or ';')
+            ? $"\"{escaped}\""
+            : escaped;
     }
 
     private static string BuildWevtutilQuery(int? days)

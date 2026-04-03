@@ -16,5 +16,6 @@ Notes:
 - Rebuild prepares runnable source bundles in `artifacts/runtime-src/` and `artifacts/runtime-desktop-src/`.
 - Release-ready work finishes with version bump, dossier, rebuild, runtime snapshot, and GitHub publication.
 - Main desktop entrypoint: `artifacts\desktop-publish\WindowsStatToolkit.Desktop.exe`
+- Portable publish folder for another PC: `artifacts\desktop-publish\`
 - Legacy PowerShell GUI and remote CLI remain available under `app\src\`.
 - The desktop app now prefers native SSH collection and falls back to PowerShell when the host is configured for `auto`.

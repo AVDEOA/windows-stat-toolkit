@@ -7,6 +7,7 @@
 - Main validator: `app/src/Validate-Toolkit.ps1`
 - Main analyzer baseline: `app/src/AnalizeV9.ps1`
 - Main desktop entrypoint: `artifacts/desktop-publish/WindowsStatToolkit.Desktop.exe`
+- Portable publish folder to copy to another PC: `artifacts/desktop-publish/`
 - Remote diagnostics CLI: `app/src/RemoteDiagnostics.App.ps1`
 - Default desktop host mode: `auto` = native SSH first, PowerShell fallback
 

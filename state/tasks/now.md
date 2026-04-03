@@ -1,11 +1,11 @@
 # Now
 
 Product: `windows-stat-toolkit`
-Version target: `v0.6.0`
+Version target: `v0.6.1`
 Mode: single-agent by default, subagents only by trigger.
 
 ## Active package
-- Continue the published native-first desktop diagnostics line after `v0.6.0`, with focus on background execution, stronger tests, and persistent monitoring
+- Ship the SSH transport stabilization patch after `v0.6.0`, covering password auth, fingerprint registration, transport testing, and portable-run path clarity
 
 ## Required path
 - implement change

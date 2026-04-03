@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog.
 
+## [0.6.1] - 2026-04-04
+
+### Added
+- Added SSH password support with per-user DPAPI protection in desktop host settings.
+- Added automatic SSH fingerprint registration and mismatch protection for saved hosts.
+- Added explicit `Test SSH` actions in the host editor and main window.
+
+### Changed
+- Replaced the fragile process-based SSH invocation with an SSH.NET-backed command runner, which removes the broken huge `EncodedCommand` error path during collection.
+- Desktop UI now shows the portable publish folder path that can be copied to another Windows machine for standalone launch.
+
 ## [0.6.0] - 2026-04-03
 
 ### Added

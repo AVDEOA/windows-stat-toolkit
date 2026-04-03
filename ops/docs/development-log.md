@@ -39,6 +39,12 @@
 - Added host-level transport mode selection to the desktop UI.
 - Added collector metadata to reports so saved output now records whether native or fallback collection produced the evidence.
 
+### v0.6.1
+
+- Replaced the fragile process-based SSH invocation with an SSH.NET-backed runner.
+- Added SSH password entry, protected password storage, and automatic host fingerprint registration.
+- Added operator-facing SSH test actions and exposed the portable publish folder path in the desktop UI.
+
 ## Continuation Notes
 
 - The compiled desktop app is now the canonical operator experience.

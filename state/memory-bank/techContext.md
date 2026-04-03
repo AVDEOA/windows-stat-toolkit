@@ -7,7 +7,7 @@
 - GUI application layer: `WindowsStatToolkit.AppModel.ps1`
 - Main compiled desktop app: `app/desktop/WindowsStatToolkit.Desktop`
 - Desktop runtime: .NET 8 WPF, self-contained `win-x64` publish
-- Native architecture: transport interface + SSH command runner + native SSH transport + PowerShell fallback transport + diagnostics orchestrator + monitoring/report services
+- Native architecture: transport interface + embedded SSH command runner + native SSH transport + PowerShell fallback transport + diagnostics orchestrator + monitoring/report services
 - Remote diagnostics entrypoint: `RemoteDiagnostics.App.ps1`
 - Validation contract: syntax parse, safety audit, runnable bundle rebuild, runtime snapshot
 - Continuation anchor: `state/memory-bank/continuation.md`
