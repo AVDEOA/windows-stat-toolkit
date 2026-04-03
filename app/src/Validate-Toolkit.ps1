@@ -5,27 +5,14 @@
 $ErrorActionPreference = 'Stop'
 
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$filesToParse = @(
-    'StatToolkit.Common.ps1',
-    'Analize.ps1',
-    'AnalizeV2.ps1',
-    'AnalizeV3.ps1',
-    'AnalizeV4.ps1',
-    'AnalizeV5.ps1',
-    'AnalizeV6.ps1',
-    'AnalizeV7.ps1',
-    'AnalizeV8.ps1',
-    'AnalizeV9.ps1',
-    'Block1_SystemInfo.ps1',
-    'Block2_SystemStats.ps1',
-    'Block3_DriverErrors.ps1',
-    'Block4_GPUDriverErrors.ps1',
-    'Block5_WHEA_PCI_Errors.ps1',
-    'Block6_BSOD_CrashErrors.ps1',
-    'Block7_AdditionalCriticalErrors.ps1',
-    'Run-All-Stat-Collection.ps1',
-    'Validate-Toolkit.ps1'
-)
+$filesToParse = Get-ChildItem -Path $root -Recurse -File -Filter '*.ps1' |
+    Where-Object {
+        $_.FullName -notmatch '[\\/](bin|obj|artifacts|state)[\\/]'
+    } |
+    Sort-Object FullName |
+    ForEach-Object {
+        $_.FullName.Substring($root.Length + 1)
+    }
 
 Write-Output '=== Проверка: синтаксический разбор ==='
 $parseFailures = @()

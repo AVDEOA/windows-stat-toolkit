@@ -1,16 +1,16 @@
 # Now
 
 Product: `windows-stat-toolkit`
-Version target: `v0.1.0`
+Version target: `v0.5.0`
 Mode: single-agent by default, subagents only by trigger.
 
 ## Active package
-- Import the legacy Windows diagnostics and AI-analysis toolkit into the new repository path and make it release-ready.
+- Publish the compiled desktop analysis line as its own GitHub branch/tag/release trail and preserve continuation context for the next chat
 
 ## Required path
-- migrate scripts and product docs
+- implement change
 - validate with product wrappers
 - update version + changelog + dossier
-- rebuild runnable source bundle
+- rebuild live runtime
 - publish GitHub branch/tag/release/asset
 - sync memory/tasks

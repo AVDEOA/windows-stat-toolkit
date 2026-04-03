@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "updated_at": "2026-04-03T00:00:00",
+  "hosts": [
+    {
+      "name": "sample-node",
+      "address": "192.168.1.20",
+      "user_name": "administrator",
+      "port": 22,
+      "key_path": "",
+      "shell": "powershell.exe",
+      "notes": "Use SSH key or agent auth.",
+      "tags": [
+        "windows",
+        "sample"
+      ]
+    }
+  ]
+}

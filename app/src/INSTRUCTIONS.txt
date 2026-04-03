@@ -1,27 +1,40 @@
 Windows Stat Toolkit
 
 Назначение
-- Набор PowerShell-скриптов для безопасного чтения диагностических данных Windows.
-- Инструмент помогает собрать факты о системе и подготовить структурированные отчеты для ручного или AI-анализа.
+- Compiled desktop product и набор PowerShell-компонентов для диагностики Windows-ПК по сети.
+- Инструмент помогает собирать конфигурацию, ошибки, сетевые симптомы и AI-ready пакеты для нейросетевого анализа.
+- В составе `v0.4.0` основной пользовательский вход теперь .NET/WPF `exe`.
 
 Основные сценарии
-- `Run-All-Stat-Collection.ps1`: запускает все диагностические блоки и сохраняет отчеты.
+- `WindowsStatToolkit.Desktop.exe`: compiled concept-приложение для управления ПК, сборов отчётов, AI bundle и мониторинга.
+- `Run-All-Stat-Collection.ps1`: локальный script backend для существующих блоков.
 - `AnalizeV9.ps1`: анализирует найденные сигналы за выбранный период.
 - `Validate-Toolkit.ps1`: проверяет синтаксис и ищет запрещенные изменяющие команды.
+- `RemoteDiagnostics.App.ps1`: legacy CLI/MVP для удалённой диагностики.
 
 Главные файлы
-- `StatToolkit.Common.ps1`: общие функции и форматирование отчетов.
-- `Block1` ... `Block7`: тематические блоки диагностики.
-- `Analize.ps1` ... `AnalizeV9.ps1`: поколения анализатора.
+- `app\desktop\WindowsStatToolkit.Desktop\MainWindow.xaml`: основной desktop UI.
+- `app\desktop\WindowsStatToolkit.Desktop\Services\RemoteDiagnosticsService.cs`: SSH + PowerShell сбор диагностического snapshot.
+- `app\desktop\WindowsStatToolkit.Desktop\Services\ReportComposer.cs`: генерация AI bundle, PC report и block reports.
+- `app\desktop\WindowsStatToolkit.Desktop\Services\MonitoringService.cs`: concept-мониторинг и Telegram alerts.
+- `StatToolkit.Common.ps1`: общие функции и форматирование legacy script-отчетов.
+- `Block1` ... `Block7`: тематические локальные диагностические блоки.
 
 Как использовать
 1. Откройте Windows PowerShell.
-2. Перейдите в папку со скриптами.
-3. Для проверки набора выполните `.\Validate-Toolkit.ps1`.
-4. Для полного сбора выполните `.\Run-All-Stat-Collection.ps1`.
-5. Для анализа выполните `.\AnalizeV9.ps1` и выберите период.
+2. Перейдите в корень продукта.
+3. Для проверки и desktop build выполните `ops\tools\test.cmd`.
+4. Для release publish выполните `ops\tools\build.cmd`.
+5. Запустите `artifacts\desktop-publish\WindowsStatToolkit.Desktop.exe`.
+6. Добавьте или отредактируйте SSH-хосты в секции `Managed PCs`.
+7. Выберите период `3/7/14/30 days` или `All time`.
+8. Используйте `AI bundle <= 30 MB`, `PC report` и кнопки `Block 1..7`.
+9. Настройте Telegram token/chat id и включите monitor loop для concept-алертов.
 
 Замечания
 - Скрипты предназначены для Windows.
+- Desktop приложение использует WPF и публикуется как self-contained `win-x64` single-file `exe`.
 - Полный сбор отчетов пишет текстовые файлы в `C:\Stat`.
 - Базовый режим работы задуман как только чтение, без изменений системы.
+- В concept v1 SSH-аутентификация рассчитана на ключ или агент; интерактивный ввод пароля в `exe` пока не реализован.
+- Прямая отправка в ChatGPT/Codex не встроена; вместо этого AI bundle сохраняется локально.

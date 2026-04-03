@@ -1,0 +1,204 @@
+﻿<Window x:Class="WindowsStatToolkit.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Windows Stat Toolkit Desktop"
+        Height="980"
+        Width="1500"
+        MinHeight="840"
+        MinWidth="1280"
+        WindowStartupLocation="CenterScreen"
+        Background="#EEF1E8">
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="230" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Padding="22" Margin="0,0,0,16" Background="#153448" CornerRadius="18">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="320" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Windows Stat Toolkit" Foreground="#FFF7E8" FontSize="30" FontWeight="Bold" />
+                    <TextBlock Text="Concept v1 desktop exe for network diagnostics, AI bundles, and Telegram alerts" Margin="0,8,0,0" Foreground="#D8E6EA" FontSize="15" />
+                </StackPanel>
+                <Border Grid.Column="1" Background="#214D63" CornerRadius="14" Padding="14">
+                    <StackPanel>
+                        <TextBlock Text="Status" Foreground="#FFF7E8" FontWeight="Bold" />
+                        <TextBlock x:Name="StatusText" Margin="0,8,0,0" Foreground="#D8E6EA" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="620" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0" Margin="0,0,16,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1.4*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="#FBFBF6" CornerRadius="14" Padding="16">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Managed PCs" FontSize="20" FontWeight="Bold" Foreground="#153448" />
+                        <DataGrid x:Name="HostsGrid"
+                                  Grid.Row="1"
+                                  Margin="0,12,0,12"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single"
+                                  CanUserAddRows="False"
+                                  HorizontalScrollBarVisibility="Auto"
+                                  HeadersVisibility="Column">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="1.1*" MinWidth="120" />
+                                <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="1.4*" MinWidth="150" />
+                                <DataGridTextColumn Header="User" Binding="{Binding UserName}" Width="1*" MinWidth="110" />
+                                <DataGridTextColumn Header="Port" Binding="{Binding Port}" Width="70" />
+                                <DataGridTextColumn Header="Tags" Binding="{Binding Tags}" Width="1.1*" MinWidth="120" />
+                                <DataGridCheckBoxColumn Header="Monitor" Binding="{Binding MonitoringEnabled}" Width="82" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <WrapPanel Grid.Row="2">
+                            <Button x:Name="NewHostButton" Content="New" Margin="0,0,8,0" Padding="12,8" />
+                            <Button x:Name="EditHostButton" Content="Edit" Margin="0,0,8,0" Padding="12,8" />
+                            <Button x:Name="DeleteHostButton" Content="Delete" Margin="0,0,8,0" Padding="12,8" />
+                            <Button x:Name="RefreshHostsButton" Content="Refresh" Padding="12,8" />
+                        </WrapPanel>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Row="1" Margin="0,16,0,0" Background="#FBFBF6" CornerRadius="14" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Telegram and monitoring" FontSize="20" FontWeight="Bold" Foreground="#153448" />
+                        <TextBlock Margin="0,12,0,0" Text="Telegram bot token" FontWeight="Bold" />
+                        <TextBlock Margin="0,3,0,0" Foreground="#5E6C75" Text="Paste the token from @BotFather. Example: 123456789:AA..." TextWrapping="Wrap" />
+                        <TextBox x:Name="BotTokenTextBox" Margin="0,6,0,0" />
+                        <TextBlock Margin="0,10,0,0" Text="Telegram chat ID" FontWeight="Bold" />
+                        <TextBlock Margin="0,3,0,0" Foreground="#5E6C75" Text="Paste your chat or group id where alerts must be delivered. Example: 123456789 or -100..." TextWrapping="Wrap" />
+                        <TextBox x:Name="ChatIdTextBox" Margin="0,6,0,0" />
+                        <UniformGrid Columns="2" Margin="0,8,0,0">
+                            <CheckBox x:Name="TelegramEnabledCheckBox" Content="Enable Telegram alerts" />
+                            <CheckBox x:Name="MonitoringMasterCheckBox" Content="Enable monitor loop" />
+                        </UniformGrid>
+                        <UniformGrid Columns="2" Margin="0,8,0,0">
+                            <StackPanel Margin="0,0,8,0">
+                                <TextBlock Text="Monitor interval seconds" />
+                                <TextBox x:Name="MonitorIntervalTextBox" Text="180" />
+                            </StackPanel>
+                            <WrapPanel Margin="8,20,0,0">
+                                <Button x:Name="SaveSettingsButton" Content="Save settings" Margin="0,0,8,0" Padding="12,8" />
+                                <Button x:Name="StartMonitoringButton" Content="Start monitor" Margin="0,0,8,0" Padding="12,8" />
+                                <Button x:Name="StopMonitoringButton" Content="Stop monitor" Padding="12,8" />
+                            </WrapPanel>
+                        </UniformGrid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="#FBFBF6" CornerRadius="14" Padding="16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="220" />
+                            <ColumnDefinition Width="160" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Margin="0,0,12,0">
+                            <TextBlock Text="Collection range" FontWeight="Bold" />
+                            <ComboBox x:Name="RangeComboBox" Margin="0,8,0,0" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                            <TextBlock Text="Output folder" FontWeight="Bold" />
+                            <Button x:Name="OpenReportsFolderButton" Margin="0,8,0,0" Content="Open reports" Padding="12,8" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Core reports" FontWeight="Bold" />
+                            <WrapPanel Margin="0,8,0,0">
+                                <Button x:Name="AiBundleButton" Content="AI bundle &lt;= 30 MB" Margin="0,0,8,8" Padding="14,8" />
+                                <Button x:Name="AnalyzeAiButton" Content="Analyze AI" Margin="0,0,8,8" Padding="14,8" />
+                                <Button x:Name="PcReportButton" Content="PC report" Margin="0,0,8,8" Padding="14,8" />
+                                <Button x:Name="Block1Button" Content="System configuration" Margin="0,0,8,8" Padding="14,8" />
+                                <Button x:Name="Block2Button" Content="System stats and uptime" Margin="0,0,8,8" Padding="14,8" />
+                                <Button x:Name="Block3Button" Content="Driver and device errors" Margin="0,0,8,8" Padding="14,8" />
+                                <Button x:Name="Block4Button" Content="GPU and video driver errors" Margin="0,0,8,8" Padding="14,8" />
+                                <Button x:Name="Block5Button" Content="WHEA and PCIe hardware errors" Margin="0,0,8,8" Padding="14,8" />
+                                <Button x:Name="Block6Button" Content="BSOD, crash and dump history" Margin="0,0,8,8" Padding="14,8" />
+                                <Button x:Name="Block7Button" Content="Additional critical stability signals" Margin="0,0,8,8" Padding="14,8" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Row="1" Margin="0,16,0,16" Background="#F8F4EA" CornerRadius="14" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Concept notes" FontSize="18" FontWeight="Bold" Foreground="#153448" />
+                        <TextBlock Margin="0,12,0,0" Text="- SSH access uses key or agent-based auth through ssh.exe." TextWrapping="Wrap" />
+                        <TextBlock Margin="0,6,0,0" Text="- AI bundle is JSON-first and aggressively trimmed to stay within 30 MB if noisy event categories overflow." TextWrapping="Wrap" />
+                        <TextBlock Margin="0,6,0,0" Text="- Monitoring in v1 works while the app is running: ping loss, low disk space, and new critical error categories trigger Telegram alerts." TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Row="2" Background="#FBFBF6" CornerRadius="14" Padding="16">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Report preview" FontSize="20" FontWeight="Bold" Foreground="#153448" />
+                        <TextBox x:Name="PreviewTextBox"
+                                 Grid.Row="1"
+                                 Margin="0,12,0,0"
+                                 IsReadOnly="True"
+                                 AcceptsReturn="True"
+                                 FontFamily="Consolas"
+                                 TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto"
+                                 HorizontalScrollBarVisibility="Auto" />
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <Border Grid.Row="2" Margin="0,16,0,0" Background="#FBFBF6" CornerRadius="14" Padding="16">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock Text="Activity log" FontSize="20" FontWeight="Bold" Foreground="#153448" />
+                <TextBox x:Name="LogTextBox"
+                         Grid.Row="1"
+                         Margin="0,12,0,0"
+                         IsReadOnly="True"
+                         AcceptsReturn="True"
+                         FontFamily="Consolas"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         HorizontalScrollBarVisibility="Auto" />
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
