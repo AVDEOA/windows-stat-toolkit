@@ -5,7 +5,7 @@ Version target: `v0.6.1`
 Mode: single-agent by default, subagents only by trigger.
 
 ## Active package
-- Ship the SSH transport stabilization patch after `v0.6.0`, covering password auth, fingerprint registration, transport testing, and portable-run path clarity
+- Continue the published SSH-stabilized desktop line after `v0.6.1`, with focus on background execution, stronger diagnostics visibility, and persistent monitoring
 
 ## Required path
 - implement change

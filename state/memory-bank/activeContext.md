@@ -8,5 +8,5 @@
 - Resume context for the next chat is captured in `state/memory-bank/continuation.md`.
 - Published analysis trail:
 - branch: `windows-stat-toolkit-analysis`
-- tag: `windows-stat-toolkit-analysis-v0.6.0`
-- release: `https://github.com/AVDEOA/windows-stat-toolkit/releases/tag/windows-stat-toolkit-analysis-v0.6.0`
+- tag: `windows-stat-toolkit-analysis-v0.6.1`
+- release: `https://github.com/AVDEOA/windows-stat-toolkit/releases/tag/windows-stat-toolkit-analysis-v0.6.1`

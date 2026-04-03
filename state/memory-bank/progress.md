@@ -11,3 +11,4 @@
 - Promoted the collector design again for `v0.6.0`: the desktop app now prefers native Windows command collection over SSH and only falls back to PowerShell when native collection fails or the host is configured for explicit PowerShell mode.
 - Published the `v0.6.0` analysis line on GitHub with branch `windows-stat-toolkit-analysis`, tag `windows-stat-toolkit-analysis-v0.6.0`, a release page, and a runnable `WindowsStatToolkit-v0.6.0-win-x64.zip` asset.
 - Started `v0.6.1` as a transport-stability patch: SSH execution now uses an embedded client, hosts can store protected passwords, and the app can auto-register SSH fingerprints and run explicit transport probes.
+- Published the `v0.6.1` analysis line on GitHub with branch `windows-stat-toolkit-analysis`, tag `windows-stat-toolkit-analysis-v0.6.1`, a release page, and a runnable `WindowsStatToolkit-v0.6.1-win-x64.zip` asset.

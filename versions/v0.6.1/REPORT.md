@@ -13,3 +13,4 @@
 
 ## Notes
 - `v0.6.0` remains preserved as the previous published backup line in `versions/v0.6.0/` and on GitHub.
+- GitHub publication trail for this release uses branch `windows-stat-toolkit-analysis`, tag `windows-stat-toolkit-analysis-v0.6.1`, and the runnable asset `WindowsStatToolkit-v0.6.1-win-x64.zip`.
